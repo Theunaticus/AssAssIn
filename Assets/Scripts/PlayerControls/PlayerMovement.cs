@@ -8,16 +8,23 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D Rigid;
     bool FacingRight;
     bool IsJumping;
+    bool IsJumpFalling;
     float GravityScale { get => Rigid.gravityScale; set => Rigid.gravityScale = value; }
 	[SerializeField] float MoveSpeed;
     [SerializeField] Vector2 GroundCheckOffset;
     [SerializeField] Vector2 GroundCheckSize;
     [SerializeField] LayerMask GroundCheckMask;
-    float CoyoteTime;
+    float CoyoteTime    =   0.1f;
     float LastTimeOnGround;
-	float OnGroundAccellSpeed;
-	float AirControlAccellSpeed;
-    Vector2 GroundCheckPoint => transform.Position() + GroundCheckOffset;
+	float OnGroundAccellSpeed   =2.5f;
+	float OnGroundDecellSpeed   =   5;
+	float AirControlAccellSpeed =   0.65f;
+	float AirControlDecellSpeed =   0.65f;
+	float JumpHangTimeThreshold =   1;
+	float JumpHangAccelerationMult  =   1.1f;
+	float JumpHangMaxSpeedMult  =   1.3f;
+
+	Vector2 GroundCheckPoint => transform.Position() + GroundCheckOffset;
 	Vector2 InputVel;
 
 
@@ -56,7 +63,29 @@ public class PlayerMovement : MonoBehaviour
 	private void Move()
 	{
 		float targetSpeed = InputVel.x * MoveSpeed;
-		Rigid.AddForce(targetSpeed * Vector2.right, ForceMode2D.Force);
+
+		float accelRate;
+		if (LastTimeOnGround > 0)
+			accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? OnGroundAccellSpeed : OnGroundDecellSpeed;
+		else
+			accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? OnGroundAccellSpeed * AirControlAccellSpeed : OnGroundDecellSpeed * AirControlDecellSpeed;
+
+		if ((IsJumping || IsJumpFalling) && Mathf.Abs(Rigid.velocity.y) < JumpHangTimeThreshold)
+		{
+			accelRate *= JumpHangAccelerationMult;
+			targetSpeed *= JumpHangMaxSpeedMult;
+		}
+
+		if (Mathf.Abs(Rigid.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(Rigid.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastTimeOnGround < 0)
+		{
+			accelRate = 0;
+		}
+
+		float speedDif = targetSpeed - Rigid.velocity.x;
+
+		float movement = speedDif * accelRate;
+
+		Rigid.AddForce(movement * Vector2.right, ForceMode2D.Force);
 	}
 
 	private void Turn()
