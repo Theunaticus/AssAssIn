@@ -10,7 +10,8 @@ public class LevelController
     {
         current = this;
     }
-    static Level CurrentLevel;
+    public static Level CurrentLevel { get; private set; }
+    
 
     public  static  void    SetCurrentLevel (Level  level)
     {
@@ -19,6 +20,9 @@ public class LevelController
 
     public  static  void    FinishLevel (Level  level)
     {
-
+        if (CurrentLevel.Data.NextLevel!=null)
+        {
+            SceneManageService.LoadScene(CurrentLevel.Data.NextLevel.SceneName);
+        }
     }
 }

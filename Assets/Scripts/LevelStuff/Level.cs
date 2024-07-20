@@ -6,6 +6,7 @@ public class Level : MonoBehaviour
 {
     public LevelDataSO Data;
     LevelFlagCombo[] Flags;
+    [SerializeField] GameObject Exit;
 
     private void Start()
     {
@@ -33,7 +34,17 @@ public class Level : MonoBehaviour
         LevelFlagCombo UnfinishedObjective = Flags.Find(f=> !f.Checked);
         if (UnfinishedObjective==null)
         {
-            LevelController.FinishLevel(this);
+            EnableExit();
         }
+    }
+
+    public  void    EnableExit ()
+    {
+        Exit.SetActive(true);
+    }
+
+    public  void    ExitLevel ()
+    {
+        LevelController.FinishLevel(this);
     }
 }

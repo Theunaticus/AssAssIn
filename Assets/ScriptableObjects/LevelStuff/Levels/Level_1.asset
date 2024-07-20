@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SceneName: SampleScene
   NextLevel: {fileID: 11400000, guid: e0fa2c3ee6dc78d40b14acd0f1c15af5, type: 2}
-  RequiredFlags: []
+  RequiredFlags:
+  - {fileID: 11400000, guid: ae4de9b65b36e90418c86a8bb9cdb14c, type: 2}

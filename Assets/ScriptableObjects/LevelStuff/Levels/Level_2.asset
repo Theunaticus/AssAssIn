@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a86960484e4d1459b1424498679771, type: 3}
   m_Name: Level_2
   m_EditorClassIdentifier: 
-  SceneName: 
+  SceneName: Level_2
   NextLevel: {fileID: 0}
   RequiredFlags: []
