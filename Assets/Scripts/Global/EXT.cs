@@ -6,6 +6,7 @@ using System;
 public static class EXT 
 {
     public static Vector2 Position(this Transform transform) => transform.position;
+    public static Vector2 Facing(this Transform transform) => transform.localScale;
     public static T Find<T>(this    T[] Group,Func<T,bool>  Predicate)
     {
         foreach (T item in Group)
