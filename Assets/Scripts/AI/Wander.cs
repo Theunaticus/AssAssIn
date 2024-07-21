@@ -10,8 +10,14 @@ public class Wander : MonoBehaviour
     [SerializeField] IShape WallCheck;
     Rigidbody2D MyRigid;
     [SerializeField] float Speed;
-    bool Falling;
+    [SerializeField] Vector2 PauseRange;
+    [SerializeField] Vector2 WalkRange;
+    float PauseLength => Random.Range(PauseRange.x,PauseRange.y);
+    float WalkLength => Random.Range(WalkRange.x, WalkRange.y);
     Vector2 Dir;
+    float NextWalk;
+    float NextPause;
+    bool Pausing;
 
     private void Start()
     {
@@ -28,22 +34,22 @@ public class Wander : MonoBehaviour
             {
                 Flip();
             }
-            if (Falling)
+            if (Time.time>NextWalk && Time.time<NextPause)
             {
-                Falling = false;
+                Pausing = false;
+                MyRigid.velocity = Dir * Speed;
+            }else if (!Pausing)
+            {
+                MyRigid.velocity = Vector2.zero;
+                Pausing = true;
+                NextWalk = Time.time + PauseLength;
+                NextPause = NextWalk + WalkLength;
             }
-            MyRigid.velocity = Dir * Speed;
-        }
-        else if (!Falling)
-        {
-            MyRigid.velocity = Vector2.up * MyRigid.velocity.y;
-            Falling = true;
         }
     }
 
     void    Flip ()
     {
-        Debug.Log("Flipping");
         Dir.x *= -1;
         transform.localScale = Vector3.up  + Vector3.right * Dir.x + Vector3.forward;
     }
